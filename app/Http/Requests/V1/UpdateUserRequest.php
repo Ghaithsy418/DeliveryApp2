@@ -37,6 +37,7 @@ class UpdateUserRequest extends FormRequest
                 "phone" => ["sometimes","unique:users,phone","max:11"],
                 "location" => ["sometimes", "required"],
                 "password" => ["sometimes","min:8"],
+                "token" => ["sometimes"],
             ];
         }
     }

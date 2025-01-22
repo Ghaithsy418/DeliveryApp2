@@ -8,11 +8,15 @@ use App\Http\Requests\V1\StoreProductRequest;
 use App\Http\Requests\V1\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
+use App\Models\Cart;
 use App\Models\Store;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -52,6 +56,48 @@ class ProductController extends Controller
 
         return response([
             "message" => "the product that has the id $product->id has been deleted successfully",
+        ],200);
+    }
+
+    public function AddToCart(string $id){
+        $product = Product::find($id);
+        $currUserId = Auth::user()->id;
+        $oldCart = Session::has("cart".(string)$currUserId) ? Session::get("cart".(string)$currUserId) : null;
+        $cart = new Cart($oldCart);
+        $cart->add($product,$product->id);
+
+        Session::put("cart".(string)$currUserId,$cart);
+
+        return response([
+            "message" => "Added Successfully",
+            "cart" => $cart,
+        ],200);
+    }
+
+    public function GetCart(){
+        $currUserId = Auth::user()->id;
+        return response([
+            "Cart" => Session::get("cart".(string)$currUserId),
+        ],200);
+    }
+
+    public function DeleteCartProduct(string $id){
+        $currUserId = Auth::user()->id;
+        $product = Product::find($id);
+        $oldCart = Session::get("cart".(string)$currUserId);
+        $cart = new Cart($oldCart);
+
+        $bool = $cart->delete($product,$id);
+
+        Session::put("cart".(string)$currUserId,$cart);
+
+        if(!$bool) return response([
+            "message" => "nothing to delete here",
+        ],404);
+
+        return response([
+            "message" => "Deleted Successfully",
+            "new cart" => Session::get("cart".(string)$currUserId),
         ],200);
     }
 
