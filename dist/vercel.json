@@ -12,8 +12,8 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
-        "APP_URL": "https://your.url.from.vercel.app",
+        "APP_DEBUG": "false",
+        "APP_URL": "https://delivery-app2-seven.vercel.app/",
         "APP_KEY": "base64:hCW3di4ZvJb4SMb+SPpTB5GkJSUpQd42TyTsB/sqv7Y=",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
